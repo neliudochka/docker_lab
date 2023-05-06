@@ -3,10 +3,10 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o build/fizzbuzz
+RUN go build -o build/fizzbuzz
 
-FROM scratch
-WORKDIR /root/
+FROM gcr.io/distroless/base
+WORKDIR /root/app
 COPY --from=builder /app/build/fizzbuzz ./
 COPY --from=builder /app/templates ./templates
-CMD [ "/root/fizzbuzz", "serve" ]
+CMD [ "./fizzbuzz", "serve" ]
